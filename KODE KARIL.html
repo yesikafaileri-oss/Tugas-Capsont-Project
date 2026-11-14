@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praktik Mandiri Dokter Anak dr. Ririn Esterina, Sp.A - Jember</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk Ikon Medis & Anak -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js untuk Grafik Pertumbuhan Anak -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#0284c7',      // Sky 600 - Biru lembut terpercaya
+                            lightBlue: '#e0f2fe', // Sky 100
+                            mint: '#10b981',      // Emerald 500 - Hijau mint segar
+                            lightMint: '#d1fae5', // Emerald 100
+                            warm: '#f59e0b',      // Amber 500 - Aksen hangat anak
+                            lightWarm: '#fef3c7', // Amber 100
+                            surface: '#f8fafc',   // Slate 50
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Pola latar belakang lembut bertema klinik anak */
+        .hero-pattern {
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#bae6fd 1.2px, transparent 1.2px), radial-gradient(#a7f3d0 1.2px, #f0f9ff 1.2px);
+            background-size: 48px 48px;
+            background-position: 0 0, 24px 24px;
+        }
+        .blob-shape {
+            border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+        }
+        /* Animasi halus */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700 antialiased selection:bg-sky-200 selection:text-sky-900">
+
+    <!-- Notifikasi Toast Pengganti Alert -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- 1. NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-sky-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo & Nama Klinik -->
+                <a href="#beranda" class="flex items-center gap-3 group">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-sky-500 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-sky-200 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-stethoscope text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="block font-heading font-bold text-slate-800 text-base sm:text-lg leading-tight">
+                            dr. Ririn Esterina, Sp.A
+                        </span>
+                        <span class="block text-xs font-medium text-sky-600">
+                            Praktik Mandiri Dokter Anak • Jember
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Menu Navigasi Desktop -->
+                <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-600">
+                    <a href="#beranda" class="hover:text-sky-600 transition-colors">Beranda</a>
+                    <a href="#layanan" class="hover:text-sky-600 transition-colors">Layanan</a>
+                    <a href="#alur" class="hover:text-sky-600 transition-colors">Alur Pendaftaran</a>
+                    <a href="#cek-antrean" class="hover:text-sky-600 transition-colors">Cek Antrean</a>
+                    <a href="#dashboard-preview" class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl font-semibold transition-colors">
+                        <i class="fa-solid fa-display text-xs"></i> Dashboard Admin
+                    </a>
+                </nav>
+
+                <!-- Tombol CTA & Mobile Toggle -->
+                <div class="flex items-center gap-3">
+                    <button onclick="openRegistrationModal('baru')" class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 active:scale-95 text-white font-semibold text-sm px-4 sm:px-5 py-2.5 rounded-2xl shadow-md shadow-sky-200 transition-all cursor-pointer">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                        <span>Daftar Periksa</span>
+                    </button>
+                    <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none" aria-label="Menu">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Navigasi Mobile -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-100 px-4 pt-3 pb-5 space-y-2 shadow-lg">
+            <a href="#beranda" class="block px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-600">Beranda</a>
+            <a href="#layanan" class="block px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-600">Layanan Unggulan</a>
+            <a href="#alur" class="block px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-600">Alur Pendaftaran</a>
+            <a href="#cek-antrean" class="block px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-600">Cek Status Antrean</a>
+            <a href="#dashboard-preview" class="block px-3 py-2.5 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50">
+                <i class="fa-solid fa-display mr-1.5"></i> Pratinjau Dashboard Admin
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. HERO SECTION (COVER UTAMA) -->
+    <section id="beranda" class="hero-pattern relative overflow-hidden pt-10 pb-16 lg:pt-16 lg:pb-24 border-b border-sky-100">
+        <!-- Dekorasi Latar -->
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-200/40 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 -left-24 w-80 h-80 bg-amber-200/30 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+                
+                <!-- Kolom Kiri: Headline, Subjudul, Info Lokasi & Tombol -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-white/90 border border-sky-200 text-sky-700 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-sm">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>Sistem Informasi Pendaftaran Pasien Berbasis Web</span>
+                    </div>
+
+                    <h1 class="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-slate-800 leading-tight">
+                        Pelayanan Kesehatan &amp; <span class="text-sky-600">Tumbuh Kembang Anak</span> Terpadu
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        Pendaftaran pasien baru dan lama kini lebih mudah, cepat, dan teratur tanpa perlu antre lama di lokasi. Pantau nomor antrean dan riwayat kesehatan buah hati Anda secara terstruktur.
+                    </p>
+
+                    <!-- Info Lokasi & Jadwal Singkat -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto lg:mx-0 text-left">
+                        <div class="bg-white/90 backdrop-blur-sm p-3.5 rounded-2xl border border-sky-100 flex items-start gap-3 shadow-sm">
+                            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800 uppercase tracking-wide">Lokasi Praktik</p>
+                                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Perumahan Rich Village Phase 1 RR 42, Kedawung, Patrang, Jember</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/90 backdrop-blur-sm p-3.5 rounded-2xl border border-sky-100 flex items-start gap-3 shadow-sm">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800 uppercase tracking-wide">Jadwal Pelayanan</p>
+                                <p class="text-xs sm:text-sm text-slate-600 mt-0.5">Senin – Sabtu: 16.00 – 20.00 WIB<br><span class="text-emerald-600 font-medium">Pendaftaran Online Dibuka 07.00 WIB</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dua Tombol Utama -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+                        <button onclick="openRegistrationModal('baru')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg shadow-sky-200 transition-all hover:-translate-y-0.5 cursor-pointer">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>Daftar Pasien Baru / Lama</span>
+                        </button>
+                        <a href="#dashboard-preview" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white hover:bg-emerald-50 text-emerald-700 border-2 border-emerald-200 font-bold px-6 py-3.5 rounded-2xl shadow-sm transition-all hover:-translate-y-0.5">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Lihat Pratinjau Dashboard Sistem</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Kartu Status Antrean Real-Time -->
+                <div id="cek-antrean" class="lg:col-span-5">
+                    <div class="bg-white rounded-3xl shadow-xl shadow-sky-100/80 border border-sky-100 p-6 sm:p-7 relative overflow-hidden animate-float">
+                        <!-- Header Kartu -->
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                                <h2 class="font-heading font-bold text-slate-800 text-base sm:text-lg">Status Antrean Hari Ini</h2>
+                            </div>
+                            <span id="current-date-badge" class="text-xs font-semibold bg-sky-50 text-sky-700 px-3 py-1 rounded-full">
+                                Praktik Buka
+                            </span>
+                        </div>
+
+                        <!-- Nomor Antrean Saat Ini -->
+                        <div class="my-6 bg-gradient-to-br from-sky-500 via-sky-600 to-emerald-500 rounded-2xl p-6 text-white text-center shadow-inner relative">
+                            <p class="text-xs uppercase tracking-widest text-sky-100 font-semibold">Nomor Antrean Sedang Diperiksa</p>
+                            <div id="hero-active-queue" class="font-heading font-extrabold text-5xl sm:text-6xl my-2 tracking-tight">
+                                A-08
+                            </div>
+                            <p class="text-xs sm:text-sm text-sky-50 flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-user-doctor"></i>
+                                <span>Ruang Periksa dr. Ririn Esterina, Sp.A</span>
+                            </p>
+                        </div>
+
+                        <!-- Statistik Antrean Singkat -->
+                        <div class="grid grid-cols-2 gap-3 mb-5">
+                            <div class="bg-amber-50/80 border border-amber-100 rounded-2xl p-3.5 text-center">
+                                <p class="text-xs text-amber-800 font-medium">Sisa Kuota Hari Ini</p>
+                                <p class="font-heading font-extrabold text-2xl text-amber-600 mt-0.5"><span id="hero-remaining-quota">12</span> <span class="text-xs font-normal text-slate-500">/ 25 Pasien</span></p>
+                            </div>
+                            <div class="bg-emerald-50/80 border border-emerald-100 rounded-2xl p-3.5 text-center">
+                                <p class="text-xs text-emerald-800 font-medium">Estimasi Tunggu</p>
+                                <p class="font-heading font-extrabold text-2xl text-emerald-600 mt-0.5">~15 <span class="text-xs font-normal text-slate-500">Menit</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Antrean Berikutnya & Cek Cepat -->
+                        <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-100 flex items-center justify-between text-xs sm:text-sm">
+                            <div>
+                                <span class="text-slate-500">Antrean Berikutnya:</span>
+                                <strong id="hero-next-queue" class="text-slate-800 ml-1">A-09 (Ananda Rafa)</strong>
+                            </div>
+                            <button onclick="openRegistrationModal('lama')" class="text-sky-600 hover:text-sky-700 font-bold underline cursor-pointer">
+                                Ambil Nomor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. BAGIAN LAYANAN UNGGULAN -->
+    <section id="layanan" class="py-16 lg:py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3.5 py-1.5 rounded-full">Layanan Kesehatan Anak</span>
+                <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-800 mt-3">
+                    Layanan Medis Khusus Buah Hati Anda
+                </h2>
+                <p class="text-slate-600 text-sm sm:text-base mt-2.5">
+                    Didukung pencatatan rekam medis digital yang terstruktur untuk memantau kesehatan anak secara menyeluruh sejak dini.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
+                <!-- Layanan 1 -->
+                <div class="group bg-slate-50 hover:bg-sky-50/70 border border-slate-100 hover:border-sky-200 rounded-3xl p-7 transition-all duration-300 hover:-translate-y-1 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-xl text-slate-800 mb-2.5">
+                        Pemeriksaan Kesehatan Anak Umum
+                    </h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Konsultasi dan penanganan keluhan kesehatan bayi, balita, hingga remaja secara ramah anak dengan riwayat kunjungan yang tersimpan rapi.
+                    </p>
+                    <ul class="space-y-2 text-xs font-medium text-slate-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-sky-500"></i> Diagnosa &amp; terapi tepat sasaran</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-sky-500"></i> Riwayat kunjungan kronologis digital</li>
+                    </ul>
+                </div>
+
+                <!-- Layanan 2 -->
+                <div class="group bg-slate-50 hover:bg-emerald-50/70 border border-slate-100 hover:border-emerald-200 rounded-3xl p-7 transition-all duration-300 hover:-translate-y-1 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-child-reaching"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-xl text-slate-800 mb-2.5">
+                        Pemantauan Tumbuh Kembang
+                    </h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Pencatatan berkala antropometri anak meliputi <strong>Berat Badan (BB)</strong>, <strong>Tinggi Badan (TB)</strong>, dan <strong>Lingkar Kepala (LK)</strong> untuk evaluasi pertumbuhan optimal.
+                    </p>
+                    <ul class="space-y-2 text-xs font-medium text-slate-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Grafik tren pertumbuhan antarkunjungan</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Deteksi dini gangguan tumbuh kembang</li>
+                    </ul>
+                </div>
+
+                <!-- Layanan 3 -->
+                <div class="group bg-slate-50 hover:bg-amber-50/70 border border-slate-100 hover:border-amber-200 rounded-3xl p-7 transition-all duration-300 hover:-translate-y-1 shadow-sm">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-xl text-slate-800 mb-2.5">
+                        Layanan Imunisasi Lengkap &amp; Terjadwal
+                    </h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Pemberian vaksinasi dasar dan lanjutan sesuai rekomendasi IDAI dengan pencatatan status imunisasi dan jadwal kunjungan berikutnya.
+                    </p>
+                    <ul class="space-y-2 text-xs font-medium text-slate-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-500"></i> Vaksin aman &amp; penyimpanan terstandar</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-amber-500"></i> Catatan riwayat imunisasi terpusat</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. BAGIAN ALUR PENDAFTARAN ONLINE (PASIEN BARU VS PASIEN LAMA) -->
+    <section id="alur" class="py-16 lg:py-20 bg-gradient-to-b from-sky-50/70 to-white border-y border-sky-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-100 px-3.5 py-1.5 rounded-full">Solusi Pendaftaran Digital</span>
+                <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-800 mt-3">
+                    Alur Pendaftaran Mudah untuk Pasien Baru &amp; Lama
+                </h2>
+                <p class="text-slate-600 text-sm sm:text-base mt-2.5">
+                    Kini pasien baru tidak perlu lagi datang lebih awal untuk konfirmasi manual. Semua dapat mendaftar dari rumah dan langsung mendapatkan nomor antrean otomatis.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Alur Pasien Baru -->
+                <div class="bg-white rounded-3xl border-2 border-sky-200 p-6 sm:p-8 shadow-md relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-sky-600 text-white flex items-center justify-center text-xl shadow-md shadow-sky-200">
+                                <i class="fa-solid fa-baby"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold text-sky-600 uppercase">Belum Punya No. Rekam Medis</span>
+                                <h3 class="font-heading font-bold text-xl text-slate-800">Alur Pasien Baru</h3>
+                            </div>
+                        </div>
+                        <span class="bg-sky-50 text-sky-700 text-xs font-bold px-3 py-1 rounded-full">1x Input Data</span>
+                    </div>
+
+                    <ol class="space-y-4">
+                        <li class="flex items-start gap-3.5">
+                            <span class="w-7 h-7 rounded-full bg-sky-100 text-sky-700 font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">1</span>
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">Isi Formulir Identitas Anak &amp; Orang Tua</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Masukkan nama anak, tanggal lahir, jenis kelamin, nama orang tua/wali, no. telepon, dan alamat cukup sekali saja.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3.5">
+                            <span class="w-7 h-7 rounded-full bg-sky-100 text-sky-700 font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">2</span>
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">Pilih Jenis Layanan Kunjungan</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Tentukan tujuan kunjungan (Pemeriksaan Umum, Tumbuh Kembang, atau Imunisasi).</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3.5">
+                            <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">3</span>
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">Dapatkan No. Rekam Medis &amp; Antrean Otomatis</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Sistem menerbitkan Nomor Rekam Medis baru beserta nomor antrean secara langsung.</p>
+                            </div>
+                        </li>
+                    </ol>
+
+                    <div class="mt-7 pt-5 border-t border-slate-100">
+                        <button onclick="openRegistrationModal('baru')" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                            <span>Daftar Sebagai Pasien Baru</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Alur Pasien Lama -->
+                <div class="bg-white rounded-3xl border-2 border-emerald-200 p-6 sm:p-8 shadow-md relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xl shadow-md shadow-emerald-200">
+                                <i class="fa-solid fa-address-card"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold text-emerald-600 uppercase">Sudah Pernah Berkunjung</span>
+                                <h3 class="font-heading font-bold text-xl text-slate-800">Alur Pasien Lama</h3>
+                            </div>
+                        </div>
+                        <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full">Super Cepat</span>
+                    </div>
+
+                    <ol class="space-y-4">
+                        <li class="flex items-start gap-3.5">
+                            <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">1</span>
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">Cari No. Rekam Medis atau Nama Anak</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Tidak perlu menulis ulang identitas. Sistem otomatis memanggil data anak dan riwayat sebelumnya.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3.5">
+                            <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">2</span>
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">Konfirmasi Keluhan / Jadwal Kontrol</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Pilih jenis pemeriksaan hari ini dan tambahkan catatan keluhan singkat bila diperlukan.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3.5">
+                            <span class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">3</span>
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">Langsung Terima Nomor Antrean</p>
+                                <p class="text-xs text-slate-500 mt-0.5">Pantau estimasi waktu pemeriksaan dari ponsel dan datang mendekati giliran Anda.</p>
+                            </div>
+                        </li>
+                    </ol>
+
+                    <div class="mt-7 pt-5 border-t border-slate-100">
+                        <button onclick="openRegistrationModal('lama')" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                            <span>Daftar Sebagai Pasien Lama</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. PRATINJAU INTERAKTIF DASHBOARD ADMINISTRATOR -->
+    <section id="dashboard-preview" class="py-16 lg:py-24 bg-slate-100/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-3.5 py-1 rounded-full text-xs font-bold shadow-sm mb-2">
+                        <i class="fa-solid fa-laptop-medical text-sky-600"></i>
+                        <span>Prototipe Sistem Informasi (PHP, MySQL &amp; Bootstrap 5)</span>
+                    </div>
+                    <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-800">
+                        Pratinjau Interaktif Dashboard Administrator
+                    </h2>
+                    <p class="text-slate-600 text-sm sm:text-base mt-1.5 max-w-2xl">
+                        Simulasi langsung modul pengelolaan pasien, antrean otomatis, pendaftaran baru/lama, dan catatan pertumbuhan anak sesuai rancangan sistem.
+                    </p>
+                </div>
+
+                <!-- Role Switcher Badge -->
+                <div class="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm self-start">
+                    <span class="text-xs font-semibold text-slate-500 px-2.5">Peran Aktif:</span>
+                    <span class="bg-sky-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-shield"></i> Petugas Admin &amp; Dokter
+                    </span>
+                </div>
+            </div>
+
+            <!-- Bingkai Browser / Aplikasi Web Dashboard -->
+            <div class="bg-white rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden">
+                <!-- Top Window Bar -->
+                <div class="bg-slate-800 text-slate-300 px-4 sm:px-6 py-3 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-rose-400"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                        <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                        <span class="ml-2 font-mono text-slate-400 hidden sm:inline">localhost/klinik-dr-ririn/dashboard.php</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-medium">
+                            <i class="fa-solid fa-database mr-1"></i> MySQL Terhubung
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Layout Utama Dashboard (Sidebar + Konten) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[620px]">
+                    
+                    <!-- Sidebar Navigasi Modul -->
+                    <aside class="lg:col-span-3 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-200 p-4 sm:p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 px-2 pb-4 mb-4 border-b border-slate-200">
+                                <div class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold">
+                                    RE
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-800">Admin Klinik Anak</p>
+                                    <p class="text-[11px] text-slate-500">dr. Ririn Esterina, Sp.A</p>
+                                </div>
+                            </div>
+
+                            <!-- Tab Menu Modul -->
+                            <nav class="flex lg:flex-col gap-1.5 overflow-x-auto pb-2 lg:pb-0" role="tablist">
+                                <button onclick="switchDashboardTab('ringkasan')" id="tab-btn-ringkasan" class="dash-tab-btn active flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all bg-sky-600 text-white shadow-sm cursor-pointer">
+                                    <i class="fa-solid fa-gauge-high w-4 text-center"></i>
+                                    <span>Ringkasan &amp; Antrean</span>
+                                </button>
+                                <button onclick="switchDashboardTab('simulasi-daftar')" id="tab-btn-simulasi-daftar" class="dash-tab-btn flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-600 hover:bg-slate-200/70 cursor-pointer">
+                                    <i class="fa-solid fa-file-circle-plus w-4 text-center"></i>
+                                    <span>Simulasi Pendaftaran</span>
+                                </button>
+                                <button onclick="switchDashboardTab('pertumbuhan')" id="tab-btn-pertumbuhan" class="dash-tab-btn flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-600 hover:bg-slate-200/70 cursor-pointer">
+                                    <i class="fa-solid fa-chart-area w-4 text-center"></i>
+                                    <span>Catatan Pertumbuhan</span>
+                                </button>
+                                <button onclick="switchDashboardTab('data-pasien')" id="tab-btn-data-pasien" class="dash-tab-btn flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all text-slate-600 hover:bg-slate-200/70 cursor-pointer">
+                                    <i class="fa-solid fa-users w-4 text-center"></i>
+                                    <span>Master Data Pasien</span>
+                                </button>
+                            </nav>
+                        </div>
+
+                        <!-- Info Panduan Singkat di Sidebar -->
+                        <div class="hidden lg:block mt-6 bg-sky-50 border border-sky-100 rounded-2xl p-4">
+                            <p class="text-xs font-bold text-sky-800 mb-1"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Mode Interaktif</p>
+                            <p class="text-[11px] text-slate-600 leading-relaxed">
+                                Coba tambahkan pasien baru/lama melalui tab <strong>Simulasi Pendaftaran</strong>, nomor antrean akan otomatis bertambah ke tabel!
+                            </p>
+                        </div>
+                    </aside>
+
+                    <!-- Area Konten Dashboard -->
+                    <div class="lg:col-span-9 p-5 sm:p-7 bg-white">
+                        
+                        <!-- Ringkasan Statistik (Selalu Tampil di Atas Konten Dashboard) -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4 mb-7">
+                            <div class="bg-sky-50/70 border border-sky-100 rounded-2xl p-4">
+                                <div class="flex items-center justify-between text-sky-600 mb-1.5">
+                                    <span class="text-xs font-semibold text-slate-600">Total Pasien</span>
+                                    <i class="fa-solid fa-children text-base"></i>
+                                </div>
+                                <p id="stat-total-pasien" class="font-heading font-extrabold text-2xl text-slate-800">342</p>
+                                <p class="text-[11px] text-emerald-600 font-medium mt-0.5">+18 bulan ini</p>
+                            </div>
+
+                            <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4">
+                                <div class="flex items-center justify-between text-emerald-600 mb-1.5">
+                                    <span class="text-xs font-semibold text-slate-600">Kunjungan Hari Ini</span>
+                                    <i class="fa-solid fa-calendar-check text-base"></i>
+                                </div>
+                                <p id="stat-kunjungan-hari-ini" class="font-heading font-extrabold text-2xl text-slate-800">13</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Kuota maks. 25</p>
+                            </div>
+
+                            <div class="bg-amber-50/70 border border-amber-100 rounded-2xl p-4">
+                                <div class="flex items-center justify-between text-amber-600 mb-1.5">
+                                    <span class="text-xs font-semibold text-slate-600">Antrean Aktif</span>
+                                    <i class="fa-solid fa-ticket text-base"></i>
+                                </div>
+                                <p id="stat-antrean-aktif" class="font-heading font-extrabold text-2xl text-amber-600">A-08</p>
+                                <p id="stat-menunggu-count" class="text-[11px] text-slate-500 mt-0.5">4 pasien menunggu</p>
+                            </div>
+
+                            <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4">
+                                <div class="flex items-center justify-between text-indigo-600 mb-1.5">
+                                    <span class="text-xs font-semibold text-slate-600">Pasien Baru</span>
+                                    <i class="fa-solid fa-user-plus text-base"></i>
+                                </div>
+                                <p id="stat-pasien-baru" class="font-heading font-extrabold text-2xl text-slate-800">5</p>
+                                <p class="text-[11px] text-indigo-600 font-medium mt-0.5">Terdaftar hari ini</p>
+                            </div>
+                        </div>
+
+                        <!-- TAB 1: RINGKASAN & TABEL DAFTAR ANTREAN HARI INI -->
+                        <div id="dash-panel-ringkasan" class="dash-panel space-y-5">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-slate-800">Daftar Antrean &amp; Pendaftaran Hari Ini</h3>
+                                    <p class="text-xs text-slate-500">Kelola status pemeriksaan pasien secara real-time</p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <!-- Pencarian -->
+                                    <div class="relative">
+                                        <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                        <input type="text" id="queue-search-input" onkeyup="filterQueueTable()" placeholder="Cari nama anak / No. RM..." class="pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500 w-48 sm:w-56">
+                                    </div>
+                                    <!-- Filter Status -->
+                                    <select id="queue-status-filter" onchange="filterQueueTable()" class="px-3 py-2 text-xs border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-sky-500">
+                                        <option value="all">Semua Status</option>
+                                        <option value="Menunggu">Menunggu</option>
+                                        <option value="Diperiksa">Sedang Diperiksa</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                    <button onclick="switchDashboardTab('simulasi-daftar')" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-colors cursor-pointer">
+                                        + Tambah Antrean
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tabel Responsif -->
+                            <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase text-slate-500">
+                                            <th class="py-3 px-4">No. Antrean</th>
+                                            <th class="py-3 px-4">No. RM &amp; Nama Anak</th>
+                                            <th class="py-3 px-4">Kategori</th>
+                                            <th class="py-3 px-4">Layanan</th>
+                                            <th class="py-3 px-4">Status</th>
+                                            <th class="py-3 px-4 text-right">Aksi Petugas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="queue-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                        <!-- Diisi oleh JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: FORM SIMULASI PENDAFTARAN PASIEN BARU / LAMA -->
+                        <div id="dash-panel-simulasi-daftar" class="dash-panel hidden">
+                            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 sm:p-6">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-slate-200">
+                                    <div>
+                                        <h3 class="font-heading font-bold text-lg text-slate-800">Simulasi Pendaftaran Pasien</h3>
+                                        <p class="text-xs text-slate-500">Pilih tipe pasien untuk mencoba alur pendaftaran otomatis</p>
+                                    </div>
+                                    <!-- Toggle Pasien Baru vs Lama -->
+                                    <div class="inline-flex bg-slate-200/80 p-1 rounded-xl self-start">
+                                        <button type="button" onclick="toggleSimFormType('baru')" id="sim-type-baru" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-sky-700 shadow-sm transition-all cursor-pointer">
+                                            Pasien Baru
+                                        </button>
+                                        <button type="button" onclick="toggleSimFormType('lama')" id="sim-type-lama" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 transition-all cursor-pointer">
+                                            Pasien Lama
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <form id="dashboard-reg-form" onsubmit="handleDashboardRegistration(event)" class="space-y-4">
+                                    <input type="hidden" id="sim-patient-type" value="Baru">
+
+                                    <!-- Bagian Pencarian Pasien Lama (Muncul jika tipe = Lama) -->
+                                    <div id="sim-lama-lookup" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                        <label class="block text-xs font-bold text-emerald-800 mb-1.5">Pilih Data Pasien Terdaftar (No. Rekam Medis)</label>
+                                        <select id="sim-existing-patient" onchange="fillExistingPatientData()" class="w-full px-3.5 py-2.5 text-sm bg-white border border-emerald-300 rounded-xl focus:outline-none focus:border-emerald-500">
+                                            <option value="">-- Pilih Pasien Lama --</option>
+                                            <option value="RM-2026-014|Ananda Kenzie Pratama|Budi Santoso|081234567890">RM-2026-014 - Ananda Kenzie Pratama (Ortu: Bp. Budi Santoso)</option>
+                                            <option value="RM-2026-029|Ananda Aisyah Putri|Siti Aminah|085712349876">RM-2026-029 - Ananda Aisyah Putri (Ortu: Ibu Siti Aminah)</option>
+                                            <option value="RM-2026-041|Ananda Gavriel Wijaya|Dewi Lestari|082198765432">RM-2026-041 - Ananda Gavriel Wijaya (Ortu: Ibu Dewi Lestari)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Anak <span class="text-rose-500">*</span></label>
+                                            <input type="text" id="sim-child-name" required placeholder="Contoh: Ananda Arka Mahendra" class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Lahir Anak <span class="text-rose-500">*</span></label>
+                                            <input type="date" id="sim-child-dob" required value="2024-05-12" class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Orang Tua / Wali <span class="text-rose-500">*</span></label>
+                                            <input type="text" id="sim-parent-name" required placeholder="Contoh: Ibu Rina Wulandari" class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-700 mb-1">No. WhatsApp / Telepon <span class="text-rose-500">*</span></label>
+                                            <input type="tel" id="sim-phone" required placeholder="Contoh: 08123456789" class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jenis Layanan Kunjungan</label>
+                                            <select id="sim-service" class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                                                <option value="Pemeriksaan Umum">Pemeriksaan Kesehatan Umum</option>
+                                                <option value="Tumbuh Kembang">Pemantauan Tumbuh Kembang (BB/TB/LK)</option>
+                                                <option value="Imunisasi">Layanan Imunisasi Terjadwal</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-700 mb-1">Alamat Domisili (Jember)</label>
+                                            <input type="text" id="sim-address" placeholder="Contoh: Patrang, Kab. Jember" value="Patrang, Jember" class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-2 flex items-center justify-end gap-3">
+                                        <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-md shadow-sky-200 transition-all cursor-pointer flex items-center gap-2">
+                                            <i class="fa-solid fa-ticket"></i>
+                                            <span>Simpan &amp; Terbitkan Nomor Antrean</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: MODUL CATATAN PERTUMBUHAN ANAK (BB, TB, LK) -->
+                        <div id="dash-panel-pertumbuhan" class="dash-panel hidden space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-slate-800">Modul Catatan Pertumbuhan Anak</h3>
+                                    <p class="text-xs text-slate-500">Pemantauan Berat Badan (kg), Tinggi Badan (cm), dan Lingkar Kepala (cm)</p>
+                                </div>
+                                <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-xl self-start">
+                                    Pasien: Ananda Rafa Alfarizi (RM-2026-008)
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                                <!-- Grafik Pertumbuhan -->
+                                <div class="lg:col-span-7 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                                    <p class="text-xs font-bold text-slate-700 mb-3">Grafik Perkembangan Antropometri (6 Kunjungan Terakhir)</p>
+                                    <div class="relative h-60 w-full">
+                                        <canvas id="growthChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Form Tambah Catatan Pertumbuhan Baru -->
+                                <div class="lg:col-span-5 bg-sky-50/60 border border-sky-100 rounded-2xl p-4">
+                                    <h4 class="font-heading font-bold text-sm text-slate-800 mb-3">Input Pemeriksaan Baru</h4>
+                                    <form onsubmit="addGrowthRecord(event)" class="space-y-3">
+                                        <div>
+                                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tanggal Pemeriksaan</label>
+                                            <input type="date" id="growth-date" required value="2026-11-14" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl">
+                                        </div>
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <div>
+                                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">BB (kg)</label>
+                                                <input type="number" step="0.1" id="growth-bb" required value="12.4" class="w-full px-2.5 py-2 text-xs bg-white border border-slate-200 rounded-xl">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">TB (cm)</label>
+                                                <input type="number" step="0.1" id="growth-tb" required value="86.5" class="w-full px-2.5 py-2 text-xs bg-white border border-slate-200 rounded-xl">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">LK (cm)</label>
+                                                <input type="number" step="0.1" id="growth-lk" required value="47.2" class="w-full px-2.5 py-2 text-xs bg-white border border-slate-200 rounded-xl">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Catatan Dokter</label>
+                                            <input type="text" id="growth-note" value="Gizi baik, pertumbuhan sesuai kurva" class="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl">
+                                        </div>
+                                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl transition-colors cursor-pointer">
+                                            + Simpan Catatan Pertumbuhan
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Tabel Riwayat Pengukuran -->
+                            <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold">
+                                            <th class="py-2.5 px-4">Tanggal Periksa</th>
+                                            <th class="py-2.5 px-4">Berat Badan (BB)</th>
+                                            <th class="py-2.5 px-4">Tinggi Badan (TB)</th>
+                                            <th class="py-2.5 px-4">Lingkar Kepala (LK)</th>
+                                            <th class="py-2.5 px-4">Catatan Klinis</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="growth-table-body" class="divide-y divide-slate-100">
+                                        <tr>
+                                            <td class="py-2.5 px-4 font-medium">14 Sep 2026</td>
+                                            <td class="py-2.5 px-4 font-bold text-sky-700">11.8 kg</td>
+                                            <td class="py-2.5 px-4 font-bold text-emerald-700">84.5 cm</td>
+                                            <td class="py-2.5 px-4 font-bold text-amber-700">46.8 cm</td>
+                                            <td class="py-2.5 px-4 text-slate-600">Imunisasi lanjutan, kondisi sehat</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2.5 px-4 font-medium">12 Jul 2026</td>
+                                            <td class="py-2.5 px-4 font-bold text-sky-700">11.2 kg</td>
+                                            <td class="py-2.5 px-4 font-bold text-emerald-700">82.0 cm</td>
+                                            <td class="py-2.5 px-4 font-bold text-amber-700">46.2 cm</td>
+                                            <td class="py-2.5 px-4 text-slate-600">Kontrol rutin tumbuh kembang</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB 4: MASTER DATA PASIEN -->
+                        <div id="dash-panel-data-pasien" class="dash-panel hidden space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-slate-800">Master Data Pasien Anak</h3>
+                                    <p class="text-xs text-slate-500">Database identitas anak dan orang tua/wali yang tersimpan terpusat</p>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold">
+                                            <th class="py-3 px-4">No. RM</th>
+                                            <th class="py-3 px-4">Nama Anak</th>
+                                            <th class="py-3 px-4">Tgl Lahir</th>
+                                            <th class="py-3 px-4">Orang Tua / Wali</th>
+                                            <th class="py-3 px-4">No. Telepon</th>
+                                            <th class="py-3 px-4">Alamat</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="master-patient-body" class="divide-y divide-slate-100">
+                                        <tr>
+                                            <td class="py-3 px-4 font-mono font-bold text-sky-700">RM-2026-008</td>
+                                            <td class="py-3 px-4 font-semibold text-slate-800">Ananda Rafa Alfarizi</td>
+                                            <td class="py-3 px-4">10 Jan 2024</td>
+                                            <td class="py-3 px-4">Ibu Maya Sari</td>
+                                            <td class="py-3 px-4">0812-3450-9988</td>
+                                            <td class="py-3 px-4">Patrang, Jember</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3 px-4 font-mono font-bold text-sky-700">RM-2026-014</td>
+                                            <td class="py-3 px-4 font-semibold text-slate-800">Ananda Kenzie Pratama</td>
+                                            <td class="py-3 px-4">22 Mar 2023</td>
+                                            <td class="py-3 px-4">Bp. Budi Santoso</td>
+                                            <td class="py-3 px-4">0812-3456-7890</td>
+                                            <td class="py-3 px-4">Sumbersari, Jember</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3 px-4 font-mono font-bold text-sky-700">RM-2026-029</td>
+                                            <td class="py-3 px-4 font-semibold text-slate-800">Ananda Aisyah Putri</td>
+                                            <td class="py-3 px-4">05 Agu 2025</td>
+                                            <td class="py-3 px-4">Ibu Siti Aminah</td>
+                                            <td class="py-3 px-4">0857-1234-9876</td>
+                                            <td class="py-3 px-4">Kaliwates, Jember</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FOOTER -->
+    <footer class="bg-slate-900 text-slate-300 pt-14 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-10 border-b border-slate-800">
+                
+                <!-- Profil Klinik -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center">
+                            <i class="fa-solid fa-stethoscope text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading font-bold text-white text-lg">dr. Ririn Esterina, Sp.A</h3>
+                            <p class="text-xs text-sky-400">Praktik Mandiri Dokter Spesialis Anak</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Memberikan pelayanan kesehatan anak yang hangat, profesional, dan terintegrasi dengan sistem informasi pendaftaran pasien berbasis web demi kenyamanan orang tua dan buah hati.
+                    </p>
+                </div>
+
+                <!-- Alamat & Kontak -->
+                <div class="lg:col-span-4 space-y-3">
+                    <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider">Lokasi &amp; Kontak Praktik</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-location-dot text-sky-400 mt-1"></i>
+                            <span>Perumahan Rich Village Phase 1 RR 42, Kedawung, Kecamatan Patrang, Kabupaten Jember, Jawa Timur</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <i class="fa-brands fa-whatsapp text-emerald-400"></i>
+                            <span>0812-3456-7890 (Admin Pendaftaran)</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-envelope text-amber-400"></i>
+                            <span>klinik.drririn@example.id</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Jam Operasional -->
+                <div class="lg:col-span-3 space-y-3">
+                    <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider">Jam Operasional</h4>
+                    <div class="bg-slate-800/70 rounded-2xl p-4 border border-slate-700/80 text-xs space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Senin – Jumat</span>
+                            <span class="font-semibold text-white">16.00 – 20.00 WIB</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Sabtu</span>
+                            <span class="font-semibold text-white">16.00 – 19.00 WIB</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Minggu / Libur</span>
+                            <span class="text-rose-400 font-semibold">Tutup</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Copyright & Kredit Akademik -->
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+                <p>&copy; 2026 Praktik Mandiri Dokter Anak dr. Ririn Esterina, Sp.A • Kabupaten Jember.</p>
+                <p class="text-center sm:text-right">
+                    Sistem Informasi Pendaftaran Pasien Berbasis Web • <span class="text-slate-400">Program Studi Sistem Informasi Universitas Terbuka (Kelompok A)</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL PENDAFTARAN CEPAT (PASIEN BARU / LAMA) -->
+    <div id="registration-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-sky-100 overflow-hidden my-auto animate-[fadeIn_0.2s_ease-out]">
+            <!-- Header Modal -->
+            <div class="bg-gradient-to-r from-sky-600 to-emerald-500 px-6 py-5 text-white flex items-center justify-between">
+                <div>
+                    <h3 class="font-heading font-bold text-lg">Pendaftaran Periksa Online</h3>
+                    <p class="text-xs text-sky-100">Praktik Mandiri dr. Ririn Esterina, Sp.A</p>
+                </div>
+                <button onclick="closeRegistrationModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Body Modal -->
+            <div class="p-6">
+                <!-- Pilihan Kategori Pasien -->
+                <div class="grid grid-cols-2 gap-2.5 bg-slate-100 p-1.5 rounded-2xl mb-5">
+                    <button type="button" id="modal-tab-baru" onclick="setModalType('baru')" class="py-2 px-3 rounded-xl text-xs font-bold bg-white text-sky-700 shadow-sm transition-all cursor-pointer">
+                        <i class="fa-solid fa-user-plus mr-1"></i> Pasien Baru
+                    </button>
+                    <button type="button" id="modal-tab-lama" onclick="setModalType('lama')" class="py-2 px-3 rounded-xl text-xs font-bold text-slate-600 transition-all cursor-pointer">
+                        <i class="fa-solid fa-id-card mr-1"></i> Pasien Lama
+                    </button>
+                </div>
+
+                <form id="modal-reg-form" onsubmit="submitModalRegistration(event)" class="space-y-4">
+                    <input type="hidden" id="modal-type-input" value="Baru">
+
+                    <!-- Input Khusus Pasien Lama -->
+                    <div id="modal-lama-field" class="hidden">
+                        <label class="block text-xs font-bold text-emerald-700 mb-1">Nomor Rekam Medis / Cari Nama Anak</label>
+                        <select id="modal-select-lama" onchange="autoFillModalLama()" class="w-full px-3.5 py-2.5 text-sm border border-emerald-200 bg-emerald-50/50 rounded-xl focus:outline-none focus:border-emerald-500">
+                            <option value="">-- Pilih Data Pasien Lama --</option>
+                            <option value="RM-2026-014|Ananda Kenzie Pratama|Bp. Budi Santoso">RM-2026-014 — Ananda Kenzie Pratama</option>
+                            <option value="RM-2026-029|Ananda Aisyah Putri|Ibu Siti Aminah">RM-2026-029 — Ananda Aisyah Putri</option>
+                            <option value="RM-2026-041|Ananda Gavriel Wijaya|Ibu Dewi Lestari">RM-2026-041 — Ananda Gavriel Wijaya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Anak <span class="text-rose-500">*</span></label>
+                        <input type="text" id="modal-child-name" required placeholder="Masukkan nama lengkap anak" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                    </div>
+
+                    <div id="modal-baru-extra" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Lahir Anak <span class="text-rose-500">*</span></label>
+                            <input type="date" id="modal-dob" value="2024-02-15" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Jenis Kelamin</label>
+                            <select id="modal-gender" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Orang Tua / Wali <span class="text-rose-500">*</span></label>
+                            <input type="text" id="modal-parent-name" required placeholder="Nama Ayah / Ibu" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">No. WhatsApp Aktif <span class="text-rose-500">*</span></label>
+                            <input type="tel" id="modal-phone" required placeholder="08xxxxxxxxxx" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Jenis Layanan Pemeriksaan</label>
+                        <select id="modal-service" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-sky-500">
+                            <option value="Pemeriksaan Umum">Pemeriksaan Kesehatan Anak Umum</option>
+                            <option value="Tumbuh Kembang">Pemantauan Tumbuh Kembang (BB, TB, LK)</option>
+                            <option value="Imunisasi">Layanan Imunisasi Terjadwal</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2 flex items-center gap-3">
+                        <button type="button" onclick="closeRegistrationModal()" class="w-1/3 py-2.5 px-4 border border-slate-200 text-slate-600 font-semibold text-sm rounded-xl hover:bg-slate-50 cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit" class="w-2/3 py-2.5 px-4 bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm rounded-xl shadow-md shadow-sky-200 transition-all cursor-pointer">
+                            Dapatkan Nomor Antrean
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Hasil Tiket Antrean Setelah Submit -->
+                <div id="modal-ticket-result" class="hidden text-center py-4 space-y-4">
+                    <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Pendaftaran Berhasil!</span>
+                        <h4 class="font-heading font-extrabold text-xl text-slate-800 mt-1">Nomor Antrean Anda</h4>
+                    </div>
+                    <div class="bg-sky-50 border-2 border-dashed border-sky-300 rounded-2xl p-5 max-w-xs mx-auto">
+                        <div id="ticket-queue-number" class="font-heading font-extrabold text-5xl text-sky-600">A-14</div>
+                        <p id="ticket-rm-number" class="text-xs font-mono font-bold text-slate-600 mt-2">No. RM: RM-2026-052</p>
+                        <p id="ticket-patient-name" class="text-sm font-bold text-slate-800 mt-1">Ananda Arka</p>
+                    </div>
+                    <p class="text-xs text-slate-500 max-w-sm mx-auto">
+                        Data pendaftaran telah otomatis masuk ke <strong>Tabel Antrean Dashboard Administrator</strong> di bawah.
+                    </p>
+                    <div class="flex justify-center gap-3 pt-2">
+                        <button onclick="closeRegistrationModal(); document.getElementById('dashboard-preview').scrollIntoView({behavior: 'smooth'});" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl cursor-pointer">
+                            Lihat di Dashboard Admin
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT INTERAKTIF -->
+    <script>
+        // Data Awal Antrean Hari Ini (Simulasi Database MySQL)
+        let queueData = [
+            { queueNo: 'A-07', rm: 'RM-2026-004', name: 'Ananda Naufal Azka', parent: 'Ibu Diana', type: 'Lama', service: 'Pemeriksaan Umum', status: 'Selesai' },
+            { queueNo: 'A-08', rm: 'RM-2026-008', name: 'Ananda Rafa Alfarizi', parent: 'Ibu Maya Sari', type: 'Lama', service: 'Tumbuh Kembang', status: 'Diperiksa' },
+            { queueNo: 'A-09', rm: 'RM-2026-051', name: 'Ananda Alesha Zahra', parent: 'Bp. Hendra', type: 'Baru', service: 'Imunisasi', status: 'Menunggu' },
+            { queueNo: 'A-10', rm: 'RM-2026-014', name: 'Ananda Kenzie Pratama', parent: 'Bp. Budi Santoso', type: 'Lama', service: 'Pemeriksaan Umum', status: 'Menunggu' },
+            { queueNo: 'A-11', rm: 'RM-2026-052', name: 'Ananda Zayyan Malik', parent: 'Ibu Fitriani', type: 'Baru', service: 'Tumbuh Kembang', status: 'Menunggu' },
+        ];
+
+        let nextQueueCounter = 12;
+        let nextRmCounter = 53;
+        let totalPatientsCount = 342;
+        let newPatientsToday = 5;
+
+        // Render Tabel Antrean Dashboard
+        function renderQueueTable() {
+            const tbody = document.getElementById('queue-table-body');
+            const searchQuery = document.getElementById('queue-search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('queue-status-filter').value;
+
+            tbody.innerHTML = '';
+
+            const filtered = queueData.filter(item => {
+                const matchText = item.name.toLowerCase().includes(searchQuery) || item.rm.toLowerCase().includes(searchQuery) || item.queueNo.toLowerCase().includes(searchQuery);
+                const matchStatus = statusFilter === 'all' || item.status === statusFilter;
+                return matchText && matchStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 text-xs">Tidak ada data antrean yang sesuai pencarian.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                let statusBadge = '';
+                if (item.status === 'Menunggu') {
+                    statusBadge = `<span class="inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-1 rounded-full"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Menunggu</span>`;
+                } else if (item.status === 'Diperiksa') {
+                    statusBadge = `<span class="inline-flex items-center gap-1 bg-sky-100 text-sky-800 text-[11px] font-bold px-2.5 py-1 rounded-full"><span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-ping"></span>Diperiksa</span>`;
+                } else {
+                    statusBadge = `<span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-check text-[10px]"></i>Selesai</span>`;
+                }
+
+                const typeBadge = item.type === 'Baru'
+                    ? `<span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold px-2 py-0.5 rounded-md">Baru</span>`
+                    : `<span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-md">Lama</span>`;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-heading font-extrabold text-sky-700">${item.queueNo}</td>
+                    <td class="py-3 px-4">
+                        <div class="font-semibold text-slate-800 text-xs sm:text-sm">${item.name}</div>
+                        <div class="text-[11px] text-slate-500 font-mono">${item.rm} • Ortu: ${item.parent}</div>
+                    </td>
+                    <td class="py-3 px-4">${typeBadge}</td>
+                    <td class="py-3 px-4 text-xs text-slate-600">${item.service}</td>
+                    <td class="py-3 px-4">${statusBadge}</td>
+                    <td class="py-3 px-4 text-right">
+                        ${item.status === 'Menunggu' ? `
+                            <button onclick="advanceQueueStatus('${item.queueNo}', 'Diperiksa')" class="bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer">
+                                Panggil
+                            </button>
+                        ` : item.status === 'Diperiksa' ? `
+                            <button onclick="advanceQueueStatus('${item.queueNo}', 'Selesai')" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer">
+                                Selesai
+                            </button>
+                        ` : `<span class="text-[11px] text-slate-400">Tercatat</span>`}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateHeroAndStats();
+        }
+
+        function filterQueueTable() {
+            renderQueueTable();
+        }
+
+        // Ubah Status Antrean oleh Petugas
+        function advanceQueueStatus(queueNo, newStatus) {
+            if (newStatus === 'Diperiksa') {
+                queueData.forEach(q => {
+                    if (q.status === 'Diperiksa') q.status = 'Selesai';
+                });
+            }
+            const target = queueData.find(q => q.queueNo === queueNo);
+            if (target) {
+                target.status = newStatus;
+                showToast(`Status antrean ${queueNo} (${target.name}) diperbarui menjadi "${newStatus}".`, 'info');
+                renderQueueTable();
+            }
+        }
+
+        // Perbarui Angka di Hero Section & Kartu Statistik Dashboard
+        function updateHeroAndStats() {
+            const activeItem = queueData.find(q => q.status === 'Diperiksa') || queueData.find(q => q.status === 'Menunggu');
+            const waitingItems = queueData.filter(q => q.status === 'Menunggu');
+            const totalToday = 8 + queueData.length; // Simulasi kumulatif hari ini
+            const remainingQuota = Math.max(0, 25 - totalToday);
+
+            if (activeItem) {
+                document.getElementById('hero-active-queue').textContent = activeItem.queueNo;
+                document.getElementById('stat-antrean-aktif').textContent = activeItem.queueNo;
+            }
+            if (waitingItems.length > 0) {
+                document.getElementById('hero-next-queue').textContent = `${waitingItems[0].queueNo} (${waitingItems[0].name})`;
+            } else {
+                document.getElementById('hero-next-queue').textContent = 'Belum ada antrean menunggu';
+            }
+
+            document.getElementById('hero-remaining-quota').textContent = remainingQuota;
+            document.getElementById('stat-total-pasien').textContent = totalPatientsCount;
+            document.getElementById('stat-kunjungan-hari-ini').textContent = totalToday;
+            document.getElementById('stat-menunggu-count').textContent = `${waitingItems.length} pasien menunggu`;
+            document.getElementById('stat-pasien-baru').textContent = newPatientsToday;
+        }
+
+        // Navigasi Tab Dashboard
+        function switchDashboardTab(tabName) {
+            document.querySelectorAll('.dash-panel').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById(`dash-panel-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.dash-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-sky-600', 'text-white', 'shadow-sm');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-200/70');
+            });
+
+            const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+            activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-200/70');
+            activeBtn.classList.add('bg-sky-600', 'text-white', 'shadow-sm');
+        }
+
+        // Toggle Tipe Form di Tab Simulasi Dashboard
+        function toggleSimFormType(type) {
+            const btnBaru = document.getElementById('sim-type-baru');
+            const btnLama = document.getElementById('sim-type-lama');
+            const lookup = document.getElementById('sim-lama-lookup');
+            document.getElementById('sim-patient-type').value = type === 'baru' ? 'Baru' : 'Lama';
+
+            if (type === 'baru') {
+                btnBaru.classList.add('bg-white', 'text-sky-700', 'shadow-sm');
+                btnBaru.classList.remove('text-slate-600');
+                btnLama.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
+                btnLama.classList.add('text-slate-600');
+                lookup.classList.add('hidden');
+                document.getElementById('dashboard-reg-form').reset();
+            } else {
+                btnLama.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
+                btnLama.classList.remove('text-slate-600');
+                btnBaru.classList.remove('bg-white', 'text-sky-700', 'shadow-sm');
+                btnBaru.classList.add('text-slate-600');
+                lookup.classList.remove('hidden');
+            }
+        }
+
+        function fillExistingPatientData() {
+            const val = document.getElementById('sim-existing-patient').value;
+            if (!val) return;
+            const [rm, name, parent, phone] = val.split('|');
+            document.getElementById('sim-child-name').value = name;
+            document.getElementById('sim-parent-name').value = parent;
+            document.getElementById('sim-phone').value = phone;
+        }
+
+        // Submit Form Simulasi di Dashboard
+        function handleDashboardRegistration(e) {
+            e.preventDefault();
+            const type = document.getElementById('sim-patient-type').value;
+            const name = document.getElementById('sim-child-name').value.trim();
+            const parent = document.getElementById('sim-parent-name').value.trim();
+            const service = document.getElementById('sim-service').value;
+            const phone = document.getElementById('sim-phone').value.trim();
+            const address = document.getElementById('sim-address').value.trim();
+            const dob = document.getElementById('sim-child-dob').value;
+
+            let rmNumber = '';
+            if (type === 'Lama' && document.getElementById('sim-existing-patient').value) {
+                rmNumber = document.getElementById('sim-existing-patient').value.split('|')[0];
+            } else {
+                rmNumber = `RM-2026-0${nextRmCounter++}`;
+                totalPatientsCount++;
+                newPatientsToday++;
+                // Tambahkan ke tabel Master Data Pasien
+                const masterBody = document.getElementById('master-patient-body');
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-3 px-4 font-mono font-bold text-sky-700">${rmNumber}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800">${name}</td>
+                    <td class="py-3 px-4">${dob || '2024-01-01'}</td>
+                    <td class="py-3 px-4">${parent}</td>
+                    <td class="py-3 px-4">${phone}</td>
+                    <td class="py-3 px-4">${address || 'Jember'}</td>
+                `;
+                masterBody.prepend(row);
+            }
+
+            const queueNo = `A-${String(nextQueueCounter++).padStart(2, '0')}`;
+            queueData.push({
+                queueNo,
+                rm: rmNumber,
+                name,
+                parent,
+                type,
+                service,
+                status: 'Menunggu'
+            });
+
+            e.target.reset();
+            switchDashboardTab('ringkasan');
+            renderQueueTable();
+            showToast(`Berhasil! ${name} terdaftar dengan Nomor Antrean ${queueNo} (${rmNumber}).`, 'success');
+        }
+
+        // Modal Pendaftaran dari Hero / Navbar / Alur
+        function openRegistrationModal(defaultType = 'baru') {
+            const modal = document.getElementById('registration-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('modal-reg-form').classList.remove('hidden');
+            document.getElementById('modal-ticket-result').classList.add('hidden');
+            setModalType(defaultType);
+        }
+
+        function closeRegistrationModal() {
+            const modal = document.getElementById('registration-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function setModalType(type) {
+            const tabBaru = document.getElementById('modal-tab-baru');
+            const tabLama = document.getElementById('modal-tab-lama');
+            const lamaField = document.getElementById('modal-lama-field');
+            const baruExtra = document.getElementById('modal-baru-extra');
+            document.getElementById('modal-type-input').value = type === 'baru' ? 'Baru' : 'Lama';
+
+            if (type === 'baru') {
+                tabBaru.classList.add('bg-white', 'text-sky-700', 'shadow-sm');
+                tabBaru.classList.remove('text-slate-600');
+                tabLama.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
+                tabLama.classList.add('text-slate-600');
+                lamaField.classList.add('hidden');
+                baruExtra.classList.remove('hidden');
+            } else {
+                tabLama.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
+                tabLama.classList.remove('text-slate-600');
+                tabBaru.classList.remove('bg-white', 'text-sky-700', 'shadow-sm');
+                tabBaru.classList.add('text-slate-600');
+                lamaField.classList.remove('hidden');
+                baruExtra.classList.add('hidden');
+            }
+        }
+
+        function autoFillModalLama() {
+            const val = document.getElementById('modal-select-lama').value;
+            if (!val) return;
+            const [rm, name, parent] = val.split('|');
+            document.getElementById('modal-child-name').value = name;
+            document.getElementById('modal-parent-name').value = parent;
+            document.getElementById('modal-phone').value = '081234567890';
+        }
+
+        function submitModalRegistration(e) {
+            e.preventDefault();
+            const type = document.getElementById('modal-type-input').value;
+            const name = document.getElementById('modal-child-name').value.trim();
+            const parent = document.getElementById('modal-parent-name').value.trim();
+            const service = document.getElementById('modal-service').value;
+
+            let rmNumber = '';
+            if (type === 'Lama' && document.getElementById('modal-select-lama').value) {
+                rmNumber = document.getElementById('modal-select-lama').value.split('|')[0];
+            } else {
+                rmNumber = `RM-2026-0${nextRmCounter++}`;
+                totalPatientsCount++;
+                newPatientsToday++;
+            }
+
+            const queueNo = `A-${String(nextQueueCounter++).padStart(2, '0')}`;
+            queueData.push({
+                queueNo,
+                rm: rmNumber,
+                name,
+                parent,
+                type,
+                service,
+                status: 'Menunggu'
+            });
+
+            renderQueueTable();
+
+            // Tampilkan Tiket di Modal
+            document.getElementById('modal-reg-form').classList.add('hidden');
+            document.getElementById('modal-ticket-result').classList.remove('hidden');
+            document.getElementById('ticket-queue-number').textContent = queueNo;
+            document.getElementById('ticket-rm-number').textContent = `No. Rekam Medis: ${rmNumber}`;
+            document.getElementById('ticket-patient-name').textContent = `${name} (${service})`;
+
+            showToast(`Antrean ${queueNo} berhasil dibuat untuk ${name}!`, 'success');
+        }
+
+        // Grafik Pertumbuhan Anak (Chart.js)
+        let growthChartInstance = null;
+        const growthLabels = ['Jan 2026', 'Mar 2026', 'Mei 2026', 'Jul 2026', 'Sep 2026'];
+        const weightData = [9.5, 10.1, 10.7, 11.2, 11.8];
+        const heightData = [75.0, 77.5, 79.8, 82.0, 84.5];
+
+        function initGrowthChart() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            growthChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: growthLabels,
+                    datasets: [
+                        {
+                            label: 'Berat Badan (kg)',
+                            data: weightData,
+                            borderColor: '#0284c7',
+                            backgroundColor: 'rgba(2, 132, 199, 0.12)',
+                            borderWidth: 2.5,
+                            tension: 0.35,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Tinggi Badan (cm)',
+                            data: heightData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                            borderWidth: 2.5,
+                            tension: 0.35,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'BB (kg)', font: { size: 10 } }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'TB (cm)', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function addGrowthRecord(e) {
+            e.preventDefault();
+            const dateVal = document.getElementById('growth-date').value;
+            const bb = parseFloat(document.getElementById('growth-bb').value);
+            const tb = parseFloat(document.getElementById('growth-tb').value);
+            const lk = parseFloat(document.getElementById('growth-lk').value);
+            const note = document.getElementById('growth-note').value;
+
+            const tbody = document.getElementById('growth-table-body');
+            const row = document.createElement('tr');
+            row.className = 'bg-emerald-50/40';
+            row.innerHTML = `
+                <td class="py-2.5 px-4 font-medium">${dateVal}</td>
+                <td class="py-2.5 px-4 font-bold text-sky-700">${bb.toFixed(1)} kg</td>
+                <td class="py-2.5 px-4 font-bold text-emerald-700">${tb.toFixed(1)} cm</td>
+                <td class="py-2.5 px-4 font-bold text-amber-700">${lk.toFixed(1)} cm</td>
+                <td class="py-2.5 px-4 text-slate-600">${note}</td>
+            `;
+            tbody.prepend(row);
+
+            if (growthChartInstance) {
+                growthLabels.push(dateVal);
+                weightData.push(bb);
+                heightData.push(tb);
+                growthChartInstance.update();
+            }
+
+            showToast('Catatan pertumbuhan anak berhasil disimpan ke riwayat pasien.', 'success');
+        }
+
+        // Notifikasi Toast
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : 'bg-sky-600';
+            toast.className = `${bgClass} text-white px-4 py-3 rounded-2xl shadow-lg text-xs sm:text-sm font-medium flex items-center gap-2.5 pointer-events-auto transition-all duration-300`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Inisialisasi saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            renderQueueTable();
+            initGrowthChart();
+        });
+    </script>
+</body>
+</html>
